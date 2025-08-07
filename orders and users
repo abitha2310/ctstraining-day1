@@ -1,0 +1,201 @@
+USER AND ORDERS
+LIKE
+1.Write a query to find all customers whose names end with a.
+mysql> select * from orders where customer_name like '%a';
++----------+---------------+--------------+---------------------+----------+--------+---------+----------------------+
+| order_id | customer_name | product_name | order_date          | quantity | price  | status  | shipping_address     |
++----------+---------------+--------------+---------------------+----------+--------+---------+----------------------+
+|        4 | Diana         | Monitor      | 2025-08-07 15:40:00 |        3 | 199.99 | shipped | 789 Pine St, Chicago |
+|        6 | Fiona         | Mouse        | 2025-08-04 10:30:00 |        4 |  25.00 | shipped | 321 Oak St, Houston  |
++----------+---------------+--------------+---------------------+----------+--------+---------+----------------------+
+2. Write a query to find orders where the product name contains the word Phone.
+
+mysql> select * from orders where product_name like '%phone%';
++----------+---------------+--------------+---------------------+----------+--------+---------+------------------+
+| order_id | customer_name | product_name | order_date          | quantity | price  | status  | shipping_address |
++----------+---------------+--------------+---------------------+----------+--------+---------+------------------+
+|        2 | Bob           | Phone        | 2025-08-06 14:10:00 |        2 | 650.50 | pending | 456 Elm St, LA   |
++----------+---------------+--------------+---------------------+----------+--------+---------+------------------+
+3. Write a query to find orders where the product name is exactly 5 characters long.
+mysql> select * from orders where length(product_name)=5;
++----------+---------------+--------------+---------------------+----------+--------+---------+---------------------+
+| order_id | customer_name | product_name | order_date          | quantity | price  | status  | shipping_address    |
++----------+---------------+--------------+---------------------+----------+--------+---------+---------------------+
+|        2 | Bob           | Phone        | 2025-08-06 14:10:00 |        2 | 650.50 | pending | 456 Elm St, LA      |
+|        6 | Fiona         | Mouse        | 2025-08-04 10:30:00 |        4 |  25.00 | shipped | 321 Oak St, Houston |
++----------+---------------+--------------+---------------------+----------+--------+---------+---------------------+
+AS (Alias)
+5. Write a query to show customer name as Buyer and price as Unit_Price.
+mysql> select customer_name as buyer,price as unit_price from orders;
++---------+------------+
+| buyer   | unit_price |
++---------+------------+
+| Alice   |    1200.00 |
+| Bob     |     650.50 |
+| Charlie |     300.00 |
+| Diana   |     199.99 |
+| Ethan   |      49.99 |
+| Fiona   |      25.00 |
++---------+------------+
+6. Write a query to show order ID and total amount (quantity × price) as Total_Cost.
+mysql> select order_id,(quantity*price) as total_cost from orders;
++----------+------------+
+| order_id | total_cost |
++----------+------------+
+|        1 |    1200.00 |
+|        2 |    1301.00 |
+|        3 |     300.00 |
+|        4 |     599.97 |
+|        5 |     249.95 |
+|        6 |     100.00 |
++----------+------------+
+NOT
+7. Write a query to find all orders not placed by Bob.
+mysql> select * from orders where customer_name!='bob';
++----------+---------------+--------------+---------------------+----------+---------+------------+-----------------------+
+| order_id | customer_name | product_name | order_date          | quantity | price   | status     | shipping_address      |
++----------+---------------+--------------+---------------------+----------+---------+------------+-----------------------+
+|        1 | Alice         | Laptop       | 2025-08-07 09:00:00 |        1 | 1200.00 | shipped    | 123 Main St, New York |
+|        3 | Charlie       | Tablet       | 2025-08-05 11:25:00 |        1 |  300.00 | cancelled  | NULL                  |
+|        4 | Diana         | Monitor      | 2025-08-07 15:40:00 |        3 |  199.99 | shipped    | 789 Pine St, Chicago  |
+|        5 | Ethan         | Keyboard     | 2025-08-03 08:20:00 |        5 |   49.99 | processing | NULL                  |
+|        6 | Fiona         | Mouse        | 2025-08-04 10:30:00 |        4 |   25.00 | shipped    | 321 Oak St, Houston   |
++----------+---------------+--------------+---------------------+----------+---------+------------+-----------------------+
+8. Write a query to find orders where status is not shipped.
+
+mysql> select * from orders where status !='shipped';
++----------+---------------+--------------+---------------------+----------+--------+------------+------------------+
+| order_id | customer_name | product_name | order_date          | quantity | price  | status     | shipping_address |
++----------+---------------+--------------+---------------------+----------+--------+------------+------------------+
+|        2 | Bob           | Phone        | 2025-08-06 14:10:00 |        2 | 650.50 | pending    | 456 Elm St, LA   |
+|        3 | Charlie       | Tablet       | 2025-08-05 11:25:00 |        1 | 300.00 | cancelled  | NULL             |
+|        5 | Ethan         | Keyboard     | 2025-08-03 08:20:00 |        5 |  49.99 | processing | NULL             |
++----------+---------------+--------------+---------------------+----------+--------+------------+------------------+
+AND
+9. Write a query to find orders with quantity greater than 2 and price less than 500.
+mysql> select * from orders where quantity>2 and price <500;
++----------+---------------+--------------+---------------------+----------+--------+------------+----------------------+
+| order_id | customer_name | product_name | order_date          | quantity | price  | status     | shipping_address     |
++----------+---------------+--------------+---------------------+----------+--------+------------+----------------------+
+|        4 | Diana         | Monitor      | 2025-08-07 15:40:00 |        3 | 199.99 | shipped    | 789 Pine St, Chicago |
+|        5 | Ethan         | Keyboard     | 2025-08-03 08:20:00 |        5 |  49.99 | processing | NULL                 |
+|        6 | Fiona         | Mouse        | 2025-08-04 10:30:00 |        4 |  25.00 | shipped    | 321 Oak St, Houston  |
++----------+---------------+--------------+---------------------+----------+--------+------------+----------------------+
+10. Write a query to find orders placed by Alice and status is shipped.
+mysql> select * from orders where customer_name = 'alice' and status='shipped';
++----------+---------------+--------------+---------------------+----------+---------+---------+-----------------------+
+| order_id | customer_name | product_name | order_date          | quantity | price   | status  | shipping_address      |
++----------+---------------+--------------+---------------------+----------+---------+---------+-----------------------+
+|        1 | Alice         | Laptop       | 2025-08-07 09:00:00 |        1 | 1200.00 | shipped | 123 Main St, New York |
++----------+---------------+--------------+---------------------+----------+---------+---------+-----------------------+
+OR
+11. Write a query to find orders where status is pending or processing.
+mysql> select * from orders where status in('pending','processing');
++----------+---------------+--------------+---------------------+----------+--------+------------+------------------+
+| order_id | customer_name | product_name | order_date          | quantity | price  | status     | shipping_address |
++----------+---------------+--------------+---------------------+----------+--------+------------+------------------+
+|        2 | Bob           | Phone        | 2025-08-06 14:10:00 |        2 | 650.50 | pending    | 456 Elm St, LA   |
+|        5 | Ethan         | Keyboard     | 2025-08-03 08:20:00 |        5 |  49.99 | processing | NULL             |
++----------+---------------+--------------+---------------------+----------+--------+------------+------------------+
+12. Write a query to find orders made by Alice or Diana.
+
+mysql> select * from orders where customer_name in ('alice','diana');
++----------+---------------+--------------+---------------------+----------+---------+---------+-----------------------+
+| order_id | customer_name | product_name | order_date          | quantity | price   | status  | shipping_address      |
++----------+---------------+--------------+---------------------+----------+---------+---------+-----------------------+
+|        1 | Alice         | Laptop       | 2025-08-07 09:00:00 |        1 | 1200.00 | shipped | 123 Main St, New York |
+|        4 | Diana         | Monitor      | 2025-08-07 15:40:00 |        3 |  199.99 | shipped | 789 Pine St, Chicago  |
++----------+---------------+--------------+---------------------+----------+---------+---------+-----------------------
+IN
+13. Write a query to find orders for products in the categories: Laptop,Phone, or Tablet.
+
+14. Write a query to find orders placed by customers in a given list:Alice,Bob, Charlie.
+mysql> select * from orders where customer_name in ('alice','bob','charlie');
++----------+---------------+--------------+---------------------+----------+---------+-----------+-----------------------+
+| order_id | customer_name | product_name | order_date          | quantity | price   | status    | shipping_address      |
++----------+---------------+--------------+---------------------+----------+---------+-----------+-----------------------+
+|        1 | Alice         | Laptop       | 2025-08-07 09:00:00 |        1 | 1200.00 | shipped   | 123 Main St, New York |
+|        2 | Bob           | Phone        | 2025-08-06 14:10:00 |        2 |  650.50 | pending   | 456 Elm St, LA        |
+|        3 | Charlie       | Tablet       | 2025-08-05 11:25:00 |        1 |  300.00 | cancelled | NULL                  |
++----------+---------------+--------------+---------------------+----------+---------+-----------+-----------------------
+IS NULL / IS NOT NULL
+15. Write a query to find orders where the shipping address is missing.
+mysql> select * from orders where shipping_address is null;
++----------+---------------+--------------+---------------------+----------+--------+------------+------------------+
+| order_id | customer_name | product_name | order_date          | quantity | price  | status     | shipping_address |
++----------+---------------+--------------+---------------------+----------+--------+------------+------------------+
+|        3 | Charlie       | Tablet       | 2025-08-05 11:25:00 |        1 | 300.00 | cancelled  | NULL             |
+|        5 | Ethan         | Keyboard     | 2025-08-03 08:20:00 |        5 |  49.99 | processing | NULL             |
++----------+---------------+--------------+---------------------+----------+--------+------------+------------------+
+16. Write a query to find orders where the shipping address is provided.
+
+mysql> SELECT * FROM orders
+    -> WHERE shipping_address IS NOT NULL;
++----------+---------------+--------------+---------------------+----------+---------+---------+-----------------------+
+| order_id | customer_name | product_name | order_date          | quantity | price   | status  | shipping_address      |
++----------+---------------+--------------+---------------------+----------+---------+---------+-----------------------+
+|        1 | Alice         | Laptop       | 2025-08-07 09:00:00 |        1 | 1200.00 | shipped | 123 Main St, New York |
+|        2 | Bob           | Phone        | 2025-08-06 14:10:00 |        2 |  650.50 | pending | 456 Elm St, LA        |
+|        4 | Diana         | Monitor      | 2025-08-07 15:40:00 |        3 |  199.99 | shipped | 789 Pine St, Chicago  |
+|        6 | Fiona         | Mouse        | 2025-08-04 10:30:00 |        4 |   25.00 | shipped | 321 Oak St, Houston   |
++----------+---------------+--------------+---------------------+----------+---------+---------+-----------------------+
+4 rows in set (0.00 sec)
+FUNCTION-BASED
+17. Write a query to find customers whose name is longer than 5 characters.
+mysql> select * from users where length(username)>5;
++----+----------+---------------------+------+----------+---------------------+---------+-------------------------+
+| id | username | email               | age  | city     | joined_at           | status  | bio                     |
++----+----------+---------------------+------+----------+---------------------+---------+-------------------------+
+|  1 | Alice123 | alice@example.com   |   25 | New York | 2025-08-01 10:00:00 | active  | Love hiking and
+travel. |
+|  3 | CharlieX | charlie@example.com |   17 | Chicago  | 2025-08-05 14:45:00 | active  | High school
+student.    |
+|  4 | Dana_88  | dana@example.com    |   45 | Miami    | 2025-07-20 08:15:00 | pending | NULL                    |
+|  7 | Gina007  | gina@example.com    |   28 | Seattle  | 2025-08-07 16:30:00 | active  | Coffee lover.           |
++----+----------+---------------------+------+----------+---------------------+---------+-------------------------+
+
+
+18. Write a query to show all customer names in uppercase.
+mysql> select upper(username) as uppercase_username from users;
++--------------------+
+| uppercase_username |
++--------------------+
+| ALICE123           |
+| BOB99              |
+| CHARLIEX           |
+| DANA_88            |
+| ELI                |
+| FAY                |
+| GINA007            |
++--------------------+
+19. Write a query to find orders where the product name is all lowercase.
+
+mysql> select*from orders where product_name = lower(product_name);
++----------+---------------+--------------+---------------------+----------+---------+------------+-----------------------+
+| order_id | customer_name | product_name | order_date          | quantity | price   | status     | shipping_address      |
++----------+---------------+--------------+---------------------+----------+---------+------------+-----------------------+
+|        1 | Alice         | Laptop       | 2025-08-07 09:00:00 |        1 | 1200.00 | shipped    | 123 Main St, New York |
+|        2 | Bob           | Phone        | 2025-08-06 14:10:00 |        2 |  650.50 | pending    | 456 Elm St, LA        |
+|        3 | Charlie       | Tablet       | 2025-08-05 11:25:00 |        1 |  300.00 | cancelled  | NULL                  |
+|        4 | Diana         | Monitor      | 2025-08-07 15:40:00 |        3 |  199.99 | shipped    | 789 Pine St, Chicago  |
+|        5 | Ethan         | Keyboard     | 2025-08-03 08:20:00 |        5 |   49.99 | processing | NULL                  |
+|        6 | Fiona         | Mouse        | 2025-08-04 10:30:00 |        4 |   25.00 | shipped    | 321 Oak St, Houston   |
++----------+---------------+--------------+---------------------+----------+---------+------------+-----------------------+
+20. Write a query to return the first 3 letters of each product name with an alias Short_Name.
+
+mysql> select left(product_name, 3) AS Short_Name FROM orders;
++------------+
+| Short_Name |
++------------+
+| Lap        |
+| Pho        |
+| Tab        |
+| Mon        |
+| Key        |
+| Mou        |
++------------
+
+
+
+
+
