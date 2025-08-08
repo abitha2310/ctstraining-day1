@@ -1,0 +1,228 @@
+2. Add a column to classify ticket status Active&if status = OpenorEscalated&Inactive if status = Closed&Waiting otherwise
+mysql> select customer_name,status,
+    -> case
+    -> when status ='open' or status ='escalated' then 'active'
+    -> when status ='closed' then 'inactive'
+    -> else 'waiting'
+    -> end as updated_status
+    -> from tickets;
++---------------+-----------+----------------+
+| customer_name | status    | updated_status |
++---------------+-----------+----------------+
+| Alice         | Open      | active         |
+| Bob           | Closed    | inactive       |
+| Charlie       | Pending   | waiting        |
+| Diana         | Open      | active         |
+| Eve           | Closed    | inactive       |
+| Frank         | Pending   | waiting        |
+| Grace         | Escalated | active         |
+| Henry         | Open      | active         |
+| Ivy           | Closed    | inactive       |
+| Jack          | Open      | active         |
+| Kate          | Pending   | waiting        |
+| Leo           | Closed    | inactive       |
+| Mona          | Escalated | active         |
+| Nina          | Open      | active         |
+| Oscar         | Pending   | waiting        |
+| Paul          | Closed    | inactive       |
+| Queen         | Pending   | waiting        |
+| Rita          | Open      | active         |
+| Sam           | Open      | active         |
+| Tina          | Escalated | active         |
++---------------+-----------+----------------+
+mysql> select ticket_id,
+    -> customer_name,
+    -> issue_type,
+    -> case
+    -> when issue_type='software' then 'software issue'
+    -> when issue_type='hardware' then 'hardware issue'
+    -> else 'other'
+    -> end as issue_category
+    -> from tickets;
++-----------+---------------+------------+----------------+
+3. List tickets and show issue category Software Issue&,Hardware Issue&,Network Issue or Other
+| ticket_id | customer_name | issue_type | issue_category |
++-----------+---------------+------------+----------------+
+|         1 | Alice         | Network    | other          |
+|         2 | Bob           | Software   | software issue |
+|         3 | Charlie       | Hardware   | hardware issue |
+|         4 | Diana         | Network    | other          |
+|         5 | Eve           | Software   | software issue |
+|         6 | Frank         | Software   | software issue |
+|         7 | Grace         | Network    | other          |
+|         8 | Henry         | Hardware   | hardware issue |
+|         9 | Ivy           | Network    | other          |
+|        10 | Jack          | Software   | software issue |
+|        11 | Kate          | Hardware   | hardware issue |
+|        12 | Leo           | Software   | software issue |
+|        13 | Mona          | Network    | other          |
+|        14 | Nina          | Hardware   | hardware issue |
+|        15 | Oscar         | Software   | software issue |
+|        16 | Paul          | Network    | other          |
+|        17 | Queen         | Hardware   | hardware issue |
+|        18 | Rita          | Software   | software issue |
+|        19 | Sam           | Network    | other          |
+|        20 | Tina          | Hardware   | hardware issue |
++-----------+---------------+------------+----------------+
+4.Mark tickets as "VIP" if customer name starts with A, E, M, or S
+mysql> select *,case
+    -> when left(customer_name,1) in ('a','e','m','s') then 'vip'
+    -> else 'regular'
+    -> end as vip_status
+    -> from tickets;
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+------------+
+| ticket_id | customer_name | issue_type | priority | status    | created_date | assigned_team | location      | vip_status |
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+------------+
+|         1 | Alice         | Network    |        3 | Open      | 2025-08-01   | Network Team  | New York      | vip        |
+|         2 | Bob           | Software   |        2 | Closed    | 2025-07-28   | Software Team | Chicago       | regular    |
+|         3 | Charlie       | Hardware   |        1 | Pending   | 2025-08-02   | Hardware Team | San Francisco | regular    |
+|         4 | Diana         | Network    |        2 | Open      | 2025-08-03   | Network Team  | New York      | regular    |
+|         5 | Eve           | Software   |        3 | Closed    | 2025-07-30   | Software Team | Boston        | vip        |
+|         6 | Frank         | Software   |        1 | Pending   | 2025-08-04   | Software Team | Seattle       | regular    |
+|         7 | Grace         | Network    |        2 | Escalated | 2025-08-05   | Network Team  | Los Angeles   | regular    |
+|         8 | Henry         | Hardware   |        3 | Open      | 2025-08-01   | Hardware Team | Houston       | regular    |
+|         9 | Ivy           | Network    |        1 | Closed    | 2025-07-29   | Network Team  | Chicago       | regular    |
+|        10 | Jack          | Software   |        3 | Open      | 2025-08-06   | Software Team | New York      | regular    |
+|        11 | Kate          | Hardware   |        2 | Pending   | 2025-08-02   | Hardware Team | Boston        | regular    |
+|        12 | Leo           | Software   |        2 | Closed    | 2025-07-31   | Software Team | San Francisco | regular    |
+|        13 | Mona          | Network    |        3 | Escalated | 2025-08-03   | Network Team  | New York      | vip        |
+|        14 | Nina          | Hardware   |        1 | Open      | 2025-08-04   | Hardware Team | Seattle       | regular    |
+|        15 | Oscar         | Software   |        3 | Pending   | 2025-08-01   | Software Team | Los Angeles   | regular    |
+|        16 | Paul          | Network    |        2 | Closed    | 2025-07-30   | Network Team  | Houston       | regular    |
+|        17 | Queen         | Hardware   |        1 | Pending   | 2025-08-05   | Hardware Team | New York      | regular    |
+|        18 | Rita          | Software   |        2 | Open      | 2025-08-06   | Software Team | Chicago       | regular    |
+|        19 | Sam           | Network    |        3 | Open      | 2025-08-07   | Network Team  | Boston        | vip        |
+|        20 | Tina          | Hardware   |        2 | Escalated | 2025-08-02   | Hardware Team | Seattle       | regular    |
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+------------+
+5.Show ticket summary: "High Priority Open", "Low Priority Closed", or "Other"
+mysql> select *,
+    -> case
+    -> WHEN priority = 3 AND status = 'Open' THEN 'High Priority Open'
+    ->         WHEN priority = 1 AND status = 'Closed' THEN 'Low Priority Closed'
+    ->         ELSE 'Other'
+    ->     END AS ticket_summary
+    -> FROM tickets;
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+---------------------+
+| ticket_id | customer_name | issue_type | priority | status    | created_date | assigned_team | location      | ticket_summary      |
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+---------------------+
+|         1 | Alice         | Network    |        3 | Open      | 2025-08-01   | Network Team  | New York      | High Priority Open  |
+|         2 | Bob           | Software   |        2 | Closed    | 2025-07-28   | Software Team | Chicago       | Other               |
+|         3 | Charlie       | Hardware   |        1 | Pending   | 2025-08-02   | Hardware Team | San Francisco | Other               |
+|         4 | Diana         | Network    |        2 | Open      | 2025-08-03   | Network Team  | New York      | Other               |
+|         5 | Eve           | Software   |        3 | Closed    | 2025-07-30   | Software Team | Boston        | Other               |
+|         6 | Frank         | Software   |        1 | Pending   | 2025-08-04   | Software Team | Seattle       | Other               |
+|         7 | Grace         | Network    |        2 | Escalated | 2025-08-05   | Network Team  | Los Angeles   | Other               |
+|         8 | Henry         | Hardware   |        3 | Open      | 2025-08-01   | Hardware Team | Houston       | High Priority Open  |
+|         9 | Ivy           | Network    |        1 | Closed    | 2025-07-29   | Network Team  | Chicago       | Low Priority Closed |
+|        10 | Jack          | Software   |        3 | Open      | 2025-08-06   | Software Team | New York      | High Priority Open  |
+|        11 | Kate          | Hardware   |        2 | Pending   | 2025-08-02   | Hardware Team | Boston        | Other               |
+|        12 | Leo           | Software   |        2 | Closed    | 2025-07-31   | Software Team | San Francisco | Other               |
+|        13 | Mona          | Network    |        3 | Escalated | 2025-08-03   | Network Team  | New York      | Other               |
+|        14 | Nina          | Hardware   |        1 | Open      | 2025-08-04   | Hardware Team | Seattle       | Other               |
+|        15 | Oscar         | Software   |        3 | Pending   | 2025-08-01   | Software Team | Los Angeles   | Other               |
+|        16 | Paul          | Network    |        2 | Closed    | 2025-07-30   | Network Team  | Houston       | Other               |
+|        17 | Queen         | Hardware   |        1 | Pending   | 2025-08-05   | Hardware Team | New York      | Other               |
+|        18 | Rita          | Software   |        2 | Open      | 2025-08-06   | Software Team | Chicago       | Other               |
+|        19 | Sam           | Network    |        3 | Open      | 2025-08-07   | Network Team  | Boston        | High Priority Open  |
+|        20 | Tina          | Hardware   |        2 | Escalated | 2025-08-02   | Hardware Team | Seattle       | Other               |
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+----------------
+
+mysql> select *,
+    -> case
+    -> when status='pending' or priority=3 then 'follow_up required'
+    -> else 'no follow_up'
+    -> end as follow_up
+    -> from tickets;
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+--------------------+
+6.Mark follow-up required if ticket is pending or priority is high
+| ticket_id | customer_name | issue_type | priority | status    | created_date | assigned_team | location      | follow_up          |
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+--------------------+
+|         1 | Alice         | Network    |        3 | Open      | 2025-08-01   | Network Team  | New York      | follow_up required |
+|         2 | Bob           | Software   |        2 | Closed    | 2025-07-28   | Software Team | Chicago       | no follow_up       |
+|         3 | Charlie       | Hardware   |        1 | Pending   | 2025-08-02   | Hardware Team | San Francisco | follow_up required |
+|         4 | Diana         | Network    |        2 | Open      | 2025-08-03   | Network Team  | New York      | no follow_up       |
+|         5 | Eve           | Software   |        3 | Closed    | 2025-07-30   | Software Team | Boston        | follow_up required |
+|         6 | Frank         | Software   |        1 | Pending   | 2025-08-04   | Software Team | Seattle       | follow_up required |
+|         7 | Grace         | Network    |        2 | Escalated | 2025-08-05   | Network Team  | Los Angeles   | no follow_up       |
+|         8 | Henry         | Hardware   |        3 | Open      | 2025-08-01   | Hardware Team | Houston       | follow_up required |
+|         9 | Ivy           | Network    |        1 | Closed    | 2025-07-29   | Network Team  | Chicago       | no follow_up       |
+|        10 | Jack          | Software   |        3 | Open      | 2025-08-06   | Software Team | New York      | follow_up required |
+|        11 | Kate          | Hardware   |        2 | Pending   | 2025-08-02   | Hardware Team | Boston        | follow_up required |
+|        12 | Leo           | Software   |        2 | Closed    | 2025-07-31   | Software Team | San Francisco | no follow_up       |
+|        13 | Mona          | Network    |        3 | Escalated | 2025-08-03   | Network Team  | New York      | follow_up required |
+|        14 | Nina          | Hardware   |        1 | Open      | 2025-08-04   | Hardware Team | Seattle       | no follow_up       |
+|        15 | Oscar         | Software   |        3 | Pending   | 2025-08-01   | Software Team | Los Angeles   | follow_up required |
+|        16 | Paul          | Network    |        2 | Closed    | 2025-07-30   | Network Team  | Houston       | no follow_up       |
+|        17 | Queen         | Hardware   |        1 | Pending   | 2025-08-05   | Hardware Team | New York      | follow_up required |
+|        18 | Rita          | Software   |        2 | Open      | 2025-08-06   | Software Team | Chicago       | no follow_up       |
+|        19 | Sam           | Network    |        3 | Open      | 2025-08-07   | Network Team  | Boston        | follow_up required |
+|        20 | Tina          | Hardware   |        2 | Escalated | 2025-08-02   | Hardware Team | Seattle       | no follow_up       |
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+----------------
+8. Label cities as "HQ" if in New York or Chicago
+sql
+CopyEdit
+
+mysql> select *, case
+    -> when location in ('new york','chicago') then 'HQ'
+    -> else 'non_HQ'
+    -> end as city_label
+    -> from tickets;
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+------------+
+| ticket_id | customer_name | issue_type | priority | status    | created_date | assigned_team | location      | city_label |
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+------------+
+|         1 | Alice         | Network    |        3 | Open      | 2025-08-01   | Network Team  | New York      | HQ         |
+|         2 | Bob           | Software   |        2 | Closed    | 2025-07-28   | Software Team | Chicago       | HQ         |
+|         3 | Charlie       | Hardware   |        1 | Pending   | 2025-08-02   | Hardware Team | San Francisco | non_HQ     |
+|         4 | Diana         | Network    |        2 | Open      | 2025-08-03   | Network Team  | New York      | HQ         |
+|         5 | Eve           | Software   |        3 | Closed    | 2025-07-30   | Software Team | Boston        | non_HQ     |
+|         6 | Frank         | Software   |        1 | Pending   | 2025-08-04   | Software Team | Seattle       | non_HQ     |
+|         7 | Grace         | Network    |        2 | Escalated | 2025-08-05   | Network Team  | Los Angeles   | non_HQ     |
+|         8 | Henry         | Hardware   |        3 | Open      | 2025-08-01   | Hardware Team | Houston       | non_HQ     |
+|         9 | Ivy           | Network    |        1 | Closed    | 2025-07-29   | Network Team  | Chicago       | HQ         |
+|        10 | Jack          | Software   |        3 | Open      | 2025-08-06   | Software Team | New York      | HQ         |
+|        11 | Kate          | Hardware   |        2 | Pending   | 2025-08-02   | Hardware Team | Boston        | non_HQ     |
+|        12 | Leo           | Software   |        2 | Closed    | 2025-07-31   | Software Team | San Francisco | non_HQ     |
+|        13 | Mona          | Network    |        3 | Escalated | 2025-08-03   | Network Team  | New York      | HQ         |
+|        14 | Nina          | Hardware   |        1 | Open      | 2025-08-04   | Hardware Team | Seattle       | non_HQ     |
+|        15 | Oscar         | Software   |        3 | Pending   | 2025-08-01   | Software Team | Los Angeles   | non_HQ     |
+|        16 | Paul          | Network    |        2 | Closed    | 2025-07-30   | Network Team  | Houston       | non_HQ     |
+|        17 | Queen         | Hardware   |        1 | Pending   | 2025-08-05   | Hardware Team | New York      | HQ         |
+|        18 | Rita          | Software   |        2 | Open      | 2025-08-06   | Software Team | Chicago       | HQ         |
+|        19 | Sam           | Network    |        3 | Open      | 2025-08-07   | Network Team  | Boston        | non_HQ     |
+|        20 | Tina          | Hardware   |        2 | Escalated | 2025-08-02   | Hardware Team | Seattle       | non_HQ     |
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+------------+
+7.List all tickets and show "Assigned Team Type"
+mysql> SELECT *,
+    ->     CASE
+    ->         WHEN assigned_team LIKE '%Software%' THEN 'SW'
+    ->         WHEN assigned_team LIKE '%Hardware%' THEN 'HW'
+    ->         WHEN assigned_team LIKE '%Network%' THEN 'NW'
+    ->         ELSE 'Other'
+    ->     END AS assigned_team_type
+    -> FROM tickets;
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+--------------------+
+| ticket_id | customer_name | issue_type | priority | status    | created_date | assigned_team | location      | assigned_team_type |
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+--------------------+
+|         1 | Alice         | Network    |        3 | Open      | 2025-08-01   | Network Team  | New York      | NW                 |
+|         2 | Bob           | Software   |        2 | Closed    | 2025-07-28   | Software Team | Chicago       | SW                 |
+|         3 | Charlie       | Hardware   |        1 | Pending   | 2025-08-02   | Hardware Team | San Francisco | HW                 |
+|         4 | Diana         | Network    |        2 | Open      | 2025-08-03   | Network Team  | New York      | NW                 |
+|         5 | Eve           | Software   |        3 | Closed    | 2025-07-30   | Software Team | Boston        | SW                 |
+|         6 | Frank         | Software   |        1 | Pending   | 2025-08-04   | Software Team | Seattle       | SW                 |
+|         7 | Grace         | Network    |        2 | Escalated | 2025-08-05   | Network Team  | Los Angeles   | NW                 |
+|         8 | Henry         | Hardware   |        3 | Open      | 2025-08-01   | Hardware Team | Houston       | HW                 |
+|         9 | Ivy           | Network    |        1 | Closed    | 2025-07-29   | Network Team  | Chicago       | NW                 |
+|        10 | Jack          | Software   |        3 | Open      | 2025-08-06   | Software Team | New York      | SW                 |
+|        11 | Kate          | Hardware   |        2 | Pending   | 2025-08-02   | Hardware Team | Boston        | HW                 |
+|        12 | Leo           | Software   |        2 | Closed    | 2025-07-31   | Software Team | San Francisco | SW                 |
+|        13 | Mona          | Network    |        3 | Escalated | 2025-08-03   | Network Team  | New York      | NW                 |
+|        14 | Nina          | Hardware   |        1 | Open      | 2025-08-04   | Hardware Team | Seattle       | HW                 |
+|        15 | Oscar         | Software   |        3 | Pending   | 2025-08-01   | Software Team | Los Angeles   | SW                 |
+|        16 | Paul          | Network    |        2 | Closed    | 2025-07-30   | Network Team  | Houston       | NW                 |
+|        17 | Queen         | Hardware   |        1 | Pending   | 2025-08-05   | Hardware Team | New York      | HW                 |
+|        18 | Rita          | Software   |        2 | Open      | 2025-08-06   | Software Team | Chicago       | SW                 |
+|        19 | Sam           | Network    |        3 | Open      | 2025-08-07   | Network Team  | Boston        | NW                 |
+|        20 | Tina          | Hardware   |        2 | Escalated | 2025-08-02   | Hardware Team | Seattle       | HW                 |
++-----------+---------------+------------+----------+-----------+--------------+---------------+---------------+--------------------+
+
+
